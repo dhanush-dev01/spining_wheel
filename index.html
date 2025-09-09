@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fitness Spin Wheel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <h1>Valtech Lucky Spin and challenges</h1>
+    <div class="wheel-wrapper">
+      <div class="pointer" aria-hidden="true">▼</div>
+      <canvas id="wheel" width="500" height="500" aria-label="Spin wheel" role="img"></canvas>
+  <button id="spinBtn" class="spin-btn" aria-label="Spin the wheel"><span class="spin-label">SPIN</span></button>
+    </div>
+  </div>
+
+  <div id="resultOverlay" class="overlay" aria-modal="true" role="dialog" aria-labelledby="resultTitle" aria-hidden="true">
+    <div class="modal">
+      <h2 id="resultTitle">Result</h2>
+      <div id="resultText" class="result-text"></div>
+      <button id="closeModal" class="close-btn">Close</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
