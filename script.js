@@ -1,11 +1,31 @@
 // Weighted Spin Wheel Implementation
 // Segments (visual order); weights for tasks are base weights and will be dynamically scaled
 const segments = [
-  { label: 'Pushups 30, girls 15', baseWeight: 25, color: '#ff8a3d', kind: 'task' },
-  { label: 'Plank 2 min', baseWeight: 35, color: '#ffcf33', kind: 'task' },
-  { label: 'Squats 50, girls 60', baseWeight: 25, color: '#38f9d7', kind: 'task' },
-  { label: 'YouTube + Music Subscription', baseWeight: 0, color: '#ff2d55', kind: 'subscription' },
-  { label: 'Pushups 60, girls 30', fixedPct: 25, color: '#7a8597', kind: 'fixed' }
+  {
+    label: "Pushups 30, girls 10 pushups",
+    baseWeight: 25,
+    color: "#ff8a3d",
+    kind: "task",
+  },
+  { label: "Plank 2 min", baseWeight: 35, color: "#ffcf33", kind: "task" },
+  {
+    label: "Squats 35, girls 35 Squats",
+    baseWeight: 25,
+    color: "#38f9d7",
+    kind: "task",
+  },
+  {
+    label: "YouTube + Music Subscription",
+    baseWeight: 0,
+    color: "#ff2d55",
+    kind: "subscription",
+  },
+  {
+    label: "Pushups 50, girls 15 pushups",
+    fixedPct: 25,
+    color: "#7a8597",
+    kind: "fixed",
+  },
 ];
 
 // Spin counter to enable rules (persist across reloads)
