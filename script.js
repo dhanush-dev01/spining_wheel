@@ -11,13 +11,9 @@ const segments = [
 // Spin counter to enable rules (persist across reloads)
 let spinCount = Number(localStorage.getItem('spinCount') || 0);
 
-// Compute dynamic effective weights per rules:
-// - No Luck fixed 30%
-// - Subscription 0% before 20 spins, 2% after
-// - Remaining probability distributed proportionally to task base weights (25/35/25)
 function getEffectiveWeights() {
   const NO_LUCK = 25;
-  const SUB = spinCount >= 20 ? 2 : 0;
+  const SUB = spinCount >= 20 ? 6 : 0;
   const remaining = Math.max(0, 100 - NO_LUCK - SUB);
   const baseSum = segments.filter(s => s.kind === 'task').reduce((a, s) => a + s.baseWeight, 0);
   const scale = baseSum > 0 ? remaining / baseSum : 0;
