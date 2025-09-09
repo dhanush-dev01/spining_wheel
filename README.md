@@ -2,12 +2,6 @@
 
 A simple HTML/CSS/JS weighted spin wheel:
 
-| Item | Probability |
-|------|-------------|
-| Pushups 35 | 25% |
-| Plank 1 min | 40% |
-| Squats 45 | 25% |
-| YouTube + Music Subscription | 10% |
 
 ## Features
 - Weighted random selection independent of equal visual slices

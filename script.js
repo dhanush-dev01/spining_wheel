@@ -3,8 +3,8 @@
 const segments = [
   { label: 'Pushups 35', weight: 25, color: '#ff8a3d' },
   { label: 'Plank 1 min', weight: 40, color: '#ffcf33' }, // adjusted after subscription set to 15%
-  { label: 'Squats 45', weight: 25, color: '#38f9d7' },
-  { label: 'YouTube + Music Subscription', weight: 10, color: '#ff2d55' } // set to 15%
+  { label: 'Squats 45', weight: 30, color: '#38f9d7' },
+  { label: 'YouTube + Music Subscription', weight: 5, color: '#ff2d55' } // set to 15%
 ];
 
 // Basic validation that weights sum 100
