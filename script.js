@@ -1,27 +1,31 @@
 // Weighted Spin Wheel Implementation
 // Segments (visual order); weights for tasks are base weights and will be dynamically scaled
 const segments = [
-  { label: 'Pushups 35, girls 7', baseWeight: 25, color: '#ff8a3d', kind: 'task' },
-  { label: 'Plank 1 min', baseWeight: 35, color: '#ffcf33', kind: 'task' },
-  { label: 'Squats 45,girls 50', baseWeight: 25, color: '#38f9d7', kind: 'task' },
+  { label: 'Pushups 30, girls 15', baseWeight: 25, color: '#ff8a3d', kind: 'task' },
+  { label: 'Plank 2 min', baseWeight: 35, color: '#ffcf33', kind: 'task' },
+  { label: 'Squats 50, girls 60', baseWeight: 25, color: '#38f9d7', kind: 'task' },
   { label: 'YouTube + Music Subscription', baseWeight: 0, color: '#ff2d55', kind: 'subscription' },
-  { label: 'Pushups 60,girls 30', baseWeight: 0, color: '#7a8597', kind: 'noluck' }
+  { label: 'Pushups 60, girls 30', fixedPct: 25, color: '#7a8597', kind: 'fixed' }
 ];
 
 // Spin counter to enable rules (persist across reloads)
 let spinCount = Number(localStorage.getItem('spinCount') || 0);
 
 function getEffectiveWeights() {
-  const NO_LUCK = 25;
+  // Subscription: 0% before 20 spins, then 6%
   const SUB = spinCount >= 20 ? 6 : 0;
-  const remaining = Math.max(0, 100 - NO_LUCK - SUB);
-  const baseSum = segments.filter(s => s.kind === 'task').reduce((a, s) => a + s.baseWeight, 0);
+  // Sum fixed outcomes (e.g., Pushups 60, girls 30 at fixed 25%)
+  const fixedTotal = segments.filter(s => s.kind === 'fixed').reduce((a, s) => a + (s.fixedPct || 0), 0);
+  const remaining = Math.max(0, 100 - fixedTotal - SUB);
+  // Distribute the remainder proportionally across task base weights
+  const baseSum = segments.filter(s => s.kind === 'task').reduce((a, s) => a + (s.baseWeight || 0), 0);
   const scale = baseSum > 0 ? remaining / baseSum : 0;
 
   return segments.map(s => {
-    if (s.kind === 'noluck') return NO_LUCK;
+    if (s.kind === 'fixed') return s.fixedPct || 0;
     if (s.kind === 'subscription') return SUB;
-    return s.baseWeight * scale; // scaled tasks
+    if (s.kind === 'task') return (s.baseWeight || 0) * scale; // scaled tasks
+    return 0;
   });
 }
 
