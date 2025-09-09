@@ -16,7 +16,7 @@ let spinCount = Number(localStorage.getItem('spinCount') || 0);
 // - Subscription 0% before 20 spins, 2% after
 // - Remaining probability distributed proportionally to task base weights (25/35/25)
 function getEffectiveWeights() {
-  const NO_LUCK = 30;
+  const NO_LUCK = 25;
   const SUB = spinCount >= 20 ? 2 : 0;
   const remaining = Math.max(0, 100 - NO_LUCK - SUB);
   const baseSum = segments.filter(s => s.kind === 'task').reduce((a, s) => a + s.baseWeight, 0);
