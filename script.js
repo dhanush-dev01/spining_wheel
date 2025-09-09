@@ -1,15 +1,33 @@
 // Weighted Spin Wheel Implementation
-// Segments & probabilities
+// Segments (visual order); weights for tasks are base weights and will be dynamically scaled
 const segments = [
-  { label: 'Pushups 35', weight: 25, color: '#ff8a3d' },
-  { label: 'Plank 1 min', weight: 40, color: '#ffcf33' }, // adjusted after subscription set to 15%
-  { label: 'Squats 45', weight: 30, color: '#38f9d7' },
-  { label: 'YouTube + Music Subscription', weight: 5, color: '#ff2d55' } // set to 15%
+  { label: 'Pushups 35', baseWeight: 25, color: '#ff8a3d', kind: 'task' },
+  { label: 'Plank 1 min', baseWeight: 35, color: '#ffcf33', kind: 'task' },
+  { label: 'Squats 45', baseWeight: 25, color: '#38f9d7', kind: 'task' },
+  { label: 'YouTube + Music Subscription', baseWeight: 0, color: '#ff2d55', kind: 'subscription' },
+  { label: 'No Luck', baseWeight: 0, color: '#7a8597', kind: 'noluck' }
 ];
 
-// Basic validation that weights sum 100
-const totalWeight = segments.reduce((a, s) => a + s.weight, 0);
-if (totalWeight !== 100) console.warn('Weights do not sum to 100. Current total:', totalWeight);
+// Spin counter to enable rules (persist across reloads)
+let spinCount = Number(localStorage.getItem('spinCount') || 0);
+
+// Compute dynamic effective weights per rules:
+// - No Luck fixed 30%
+// - Subscription 0% before 20 spins, 2% after
+// - Remaining probability distributed proportionally to task base weights (25/35/25)
+function getEffectiveWeights() {
+  const NO_LUCK = 30;
+  const SUB = spinCount >= 20 ? 2 : 0;
+  const remaining = Math.max(0, 100 - NO_LUCK - SUB);
+  const baseSum = segments.filter(s => s.kind === 'task').reduce((a, s) => a + s.baseWeight, 0);
+  const scale = baseSum > 0 ? remaining / baseSum : 0;
+
+  return segments.map(s => {
+    if (s.kind === 'noluck') return NO_LUCK;
+    if (s.kind === 'subscription') return SUB;
+    return s.baseWeight * scale; // scaled tasks
+  });
+}
 
 const canvas = document.getElementById('wheel');
 const ctx = canvas.getContext('2d');
@@ -70,7 +88,7 @@ function drawWheel(highlightIndex = -1) {
     ctx.fillStyle = '#0f1218';
     ctx.font = '600 18px system-ui';
     const chord = 2 * labelRadius * Math.sin(sliceAngle / 2) - 20;
-    const lines = breakIntoLines(ctx, seg.label, chord, 18);
+  const lines = breakIntoLines(ctx, seg.label, chord, 18);
     const lineHeight = 20;
     const totalHeight = (lines.length - 1) * lineHeight;
     lines.forEach((ln, idx) => ctx.fillText(ln, 0, idx * lineHeight - totalHeight / 2));
@@ -125,13 +143,15 @@ let isSpinning = false;
 let currentRotation = 0; // radians
 
 function weightedRandomIndex() {
-  const r = Math.random() * 100;
+  const weights = getEffectiveWeights();
+  const total = weights.reduce((a, b) => a + b, 0) || 0;
+  const r = Math.random() * total;
   let acc = 0;
-  for (let i = 0; i < segments.length; i++) {
-    acc += segments[i].weight;
+  for (let i = 0; i < weights.length; i++) {
+    acc += weights[i];
     if (r < acc) return i;
   }
-  return segments.length - 1; // fallback
+  return weights.length - 1; // fallback
 }
 
 function spin() {
@@ -206,6 +226,9 @@ function finalize(index) {
     showResult(segments[index].label);
     isSpinning = false;
     spinBtn.disabled = false;
+  // increment spin counter for rule effect and persist
+  spinCount += 1;
+  localStorage.setItem('spinCount', String(spinCount));
   }, 650); // delay to allow ring/confetti
 }
 
